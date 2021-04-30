@@ -6,7 +6,7 @@ cd ..
 # This script builds executables for multiple platforms and architectures 
 # it is used by the CI system to output releases. When testing locally it shouldn't be required
 # unless you wish to share a build with someone on a different platform
-platforms=("linux/amd64" "windows/amd64" "windows/386" "darwin/amd64" "linux/386" "linux/arm")
+platforms=("linux/amd64")
 
 for platform in "${platforms[@]}"
 do
@@ -14,7 +14,7 @@ do
     GOOS=${platform_split[0]}
     GOARCH=${platform_split[1]}
     CGO_ENABLED=0 
-    output_name='./bin/terraform-provider-kubectl-'$GOOS'-'$GOARCH
+    output_name='./bin/terraform-provider-kubectl'
     if [ $GOOS = "windows" ]; then
         output_name+='.exe'
     fi  

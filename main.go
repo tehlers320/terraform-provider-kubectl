@@ -1,6 +1,8 @@
 package main
 
 import (
+	"context"
+	"flag"
 	kubernetes "github.com/gavinbunney/terraform-provider-kubectl/kubernetes"
 	goplugin "github.com/hashicorp/go-plugin"
 	"github.com/hashicorp/terraform-plugin-go/tfprotov5"
@@ -11,9 +13,18 @@ import (
 )
 
 func main() {
-	opts := &plugin.ServeOpts{}
+	var debugMode bool
+
+	flag.BoolVar(&debugMode, "debuggable", false, "set to true to run the provider with support for debuggers like delve")
+	flag.Parse()
+
+	opts := &plugin.ServeOpts{ProviderFunc: kubernetes.Provider}
 	grpcProviderFunc := func() tfprotov5.ProviderServer {
 		return schema.NewGRPCProviderServer(kubernetes.Provider())
+	}
+
+	if debugMode {
+		plugin.Debug(context.Background(), "gavinbunney/kubectl", opts)
 	}
 
 	// taken from github.com/hashicorp/terraform-plugin-sdk/v2@v2.3.0/plugin/serve.go

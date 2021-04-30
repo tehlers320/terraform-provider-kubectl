@@ -223,7 +223,6 @@ metadata:
 				if err != nil {
 					return []*schema.ResourceData{}, fmt.Errorf("failed to convert json to yaml: %+v", err)
 				}
-
 				_ = d.Set("yaml_body", string(yamlParsed))
 				_ = d.Set("yaml_body_parsed", string(yamlParsed))
 
@@ -231,7 +230,6 @@ metadata:
 			},
 		},
 		CustomizeDiff: func(context context.Context, d *schema.ResourceDiff, meta interface{}) error {
-
 			// trigger a recreation if the yaml-body has any pending changes
 			if d.Get("force_new").(bool) {
 				_ = d.ForceNew("yaml_body")
@@ -289,14 +287,14 @@ metadata:
 					log.Printf("[TRACE] sensitive field %s skipped does not exist", s)
 				}
 			}
-
+/*
 			obfuscatedYamlBytes, obfuscatedYamlBytesErr := yamlWriter.Marshal(obfuscatedYaml.unstruct.Object)
 			if obfuscatedYamlBytesErr != nil {
 				return fmt.Errorf("failed to serialized obfuscated yaml: %+v", obfuscatedYamlBytesErr)
 			}
 
 			_ = d.SetNew("yaml_body_parsed", string(obfuscatedYamlBytes))
-
+*/
 			// Get the UID of the K8s resource as it was when the `resourceKubectlManifestCreate` func completed.
 			createdAtUID := d.Get("uid").(string)
 			// Get the UID of the K8s resource as it currently is in the cluster.
@@ -920,6 +918,9 @@ func getLiveManifestFilteredForUserProvidedOnly(d *schema.ResourceData, userProv
 	ignoreFieldsRaw, hasIgnoreFields := d.GetOk("ignore_fields")
 	if hasIgnoreFields {
 		ignoreFields = expandStringList(ignoreFieldsRaw.([]interface{}))
+		fmt.Printf("[DEBUG] ignore_fields contains %+v", ignoreFields )
+	} else {
+		fmt.Print("[DEBUG] ignore_fields empty" )
 	}
 
 	return getLiveManifestFilteredForUserProvidedOnlyWithIgnoredFields(ignoreFields, userProvided, liveManifest)

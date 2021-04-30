@@ -171,6 +171,7 @@ func Provider() *schema.Provider {
 		return providerConfigure(d, terraformVersion)
 	}
 
+//	fmt.Printf("[TRACE] foo %v", p.ResourcesMap["kubectl_manifest"].Schema["yaml_body_parsed"])
 	return p
 }
 
